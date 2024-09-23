@@ -75,7 +75,6 @@ def evaluate_policy_sync(env, value_func, gamma, policy, max_iters=int(1e3), tol
     i = 0
     delta = tol
     n_states = env.observation_space.n
-    n_actions = env.action_space.n
     while delta >= tol and i < max_iters:
         delta = 0
         old_value_func = value_func.copy()
@@ -123,11 +122,10 @@ def evaluate_policy_async_ordered(env, value_func, gamma, policy, max_iters=int(
     # BEGIN STUDENT SOLUTION
     delta = tol
     n_states = env.observation_space.n
-    n_actions = env.action_space.n
     i = 0
     while delta >= tol and i < max_iters:
         delta = 0
-        for state in np.random.permutation(list(range(n_states))):
+        for state in range(n_states):
             value = value_func[state]
             new_value = 0
             for prob, nextstate, reward, is_terminal in env.P[state][policy[state]]:
@@ -171,7 +169,6 @@ def evaluate_policy_async_randperm(env, value_func, gamma, policy, max_iters=int
     # BEGIN STUDENT SOLUTION 
     delta = tol
     n_states = env.observation_space.n
-    n_actions = env.action_space.n
     i = 0
     while delta >= tol and i < max_iters:
         delta = 0
@@ -384,7 +381,6 @@ def value_iteration_sync(env, gamma, max_iters=int(1e3), tol=1e-3):
         tile_type = env.desc[row, col]
         if tile_type == b'G' or tile_type == b'H':
            continue
-
         val = value_func[state]
         max_q = -float('inf')
         for action in range(env.action_space.n):
@@ -533,6 +529,7 @@ def value_iteration_async_custom(env, gamma, max_iters=int(1e3), tol=1e-3):
     # BEGIN STUDENT SOLUTION
     goal_r = -1
     goal_c = -1
+    # We find the goal row and column
     for state in range(env.observation_space.n):
       row = state // env.ncol
       col = state - row * env.ncol
@@ -545,7 +542,7 @@ def value_iteration_async_custom(env, gamma, max_iters=int(1e3), tol=1e-3):
     def manhattan(x):
       row = x // env.ncol
       col = x - row * env.ncol
-      return np.sqrt((row - goal_r)**2 + (col - goal_c)**2)
+      return abs(row - goal_r) + abs(col - goal_c)
 
     i = 0
     delta = tol
@@ -554,7 +551,6 @@ def value_iteration_async_custom(env, gamma, max_iters=int(1e3), tol=1e-3):
       delta = 0
       state_manhattans = list(map(manhattan, [x for x in range(env.observation_space.n)]))
       states = np.argsort(state_manhattans)
-      print(state_manhattans, states)
 
       for state in states:
         row = state // env.ncol
@@ -694,7 +690,7 @@ if __name__ == '__main__':
         #     print(f"{iters} iterations")
         # print(f"{np.mean(iters)} mean iterations")
 
-        print("value async custom")
+        print("value async manhattan")
         value_func, iters = value_iteration_async_custom(env, gamma, max_iters=int(1e4), tol=1e-3)
         print(f"{iters} iterations")
         value_func_heatmap(env, value_func)
