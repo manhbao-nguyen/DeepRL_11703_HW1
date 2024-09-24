@@ -433,7 +433,6 @@ def value_iteration_async_ordered(env, gamma, max_iters=int(1e3), tol=1e-3):
         tile_type = env.desc[row, col]
         if tile_type == b'G' or tile_type == b'H':
            continue
-
         val = value_func[state]
         max_q = -float('inf')
         for action in range(env.action_space.n):
@@ -486,7 +485,6 @@ def value_iteration_async_randperm(env, gamma, max_iters=int(1e3), tol=1e-3):
         tile_type = env.desc[row, col]
         if tile_type == b'G' or tile_type == b'H':
            continue
-
         val = value_func[state]
         max_q = -float('inf')
         for action in range(env.action_space.n):
@@ -665,14 +663,14 @@ if __name__ == '__main__':
         # value_func_heatmap(env, value_func)
         # plt.show()
 
-        # print("policy async randperm")
-        # pi_steps_list, pe_steps_list = [], []
-        # for _ in range(10):
-        #     policy, value_func, pi_steps, pe_steps = policy_iteration_async_randperm(env, gamma=gamma)
-        #     pi_steps_list.append(pi_steps)
-        #     pe_steps_list.append(pe_steps) 
-        #     print(f"pi_steps: {pi_steps}, pe_steps: {pe_steps}") 
-        # print(f"mean pi_steps: {np.mean(pi_steps)}, mean pe_steps: {np.mean(pe_steps)}") 
+        print("policy async randperm")
+        pi_steps_list, pe_steps_list = [], []
+        for _ in range(10):
+            policy, value_func, pi_steps, pe_steps = policy_iteration_async_randperm(env, gamma=gamma)
+            pi_steps_list.append(pi_steps)
+            pe_steps_list.append(pe_steps) 
+            print(f"pi_steps: {pi_steps}, pe_steps: {pe_steps}") 
+        print(f"mean pi_steps: {np.mean(pi_steps_list)}, mean pe_steps: {np.mean(pe_steps_list)}") 
 
         # print("value async ordered")
         # value_func, iters = value_iteration_async_ordered(env, gamma, max_iters=int(1e4), tol=1e-3)
@@ -688,15 +686,15 @@ if __name__ == '__main__':
         #     value_func, iters = value_iteration_async_randperm(env, gamma, max_iters=int(1e4), tol=1e-3)
         #     iters_list.append(iters)
         #     print(f"{iters} iterations")
-        # print(f"{np.mean(iters)} mean iterations")
+        # print(f"{np.mean(iters_list)} mean iterations")
 
-        print("value async manhattan")
-        value_func, iters = value_iteration_async_custom(env, gamma, max_iters=int(1e4), tol=1e-3)
-        print(f"{iters} iterations")
-        value_func_heatmap(env, value_func)
-        plt.show()
-        policy = value_func_to_policy(env, gamma, value_func)
-        display_policy_letters(env, policy)
+        # print("value async manhattan")
+        # value_func, iters = value_iteration_async_custom(env, gamma, max_iters=int(1e4), tol=1e-3)
+        # print(f"{iters} iterations")
+        # value_func_heatmap(env, value_func)
+        # plt.show()
+        # policy = value_func_to_policy(env, gamma, value_func)
+        # display_policy_letters(env, policy)
 
 
         # END STUDENT SOLUTION
